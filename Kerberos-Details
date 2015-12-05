@@ -1,1 +1,14 @@
 # Kerberos
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Kerberos is a computer network authentication protocol which works on the basis of 'tickets' or secret key cryptography \n
+to allow nodes communicating over a non-secure network to prove their identity to one another in a secure manner.
+(MIT) developed Kerberos
+AES 256 bit encryption , More secure and Fast
+
+
+Limitations -
+---------------
+Single point of failure: It requires continuous availability of a central server
+Kerberos has strict time requirements, which means the clocks of the involved hosts must be synchronized within configured limits.
+
