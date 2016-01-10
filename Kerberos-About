@@ -1,1 +1,10 @@
+Kerberos is a shared secret protocol, which means that tickets encrypted by the KDC can be decrypted only by clients or servers that have the shared secret.
+To understand the Kerberos protocol, start with the concept of a Kerberos realm, which is a set of users and servers for which a given KDC is the authenticating authority.
+A Kerberos principal is a workstation user ID and its associated password or a server ID and its associated password. 
+The KDC stores the principals and their passwords. The principal names and IDs aren't stored on the individual machines in the realm.
+Each principal provides a valid Kerberos ticket, which is authenticated before the request is processed. The KDC is the only place in a Kerberos realm where a ticket is created. 
+Two kinds of tickets are used in the Kerberos protocol: ticket-granting tickets (TGTs) and STs. TGTs are obtained when a principal logs into (performs a "kinit") the Kerberos realm. Each user must obtain a TGT before using any server that performs Kerberos authentication.
+
+
+http://www.ibmsystemsmag.com/ibmi/administrator/security/Kerberos-Authentication-on-the-iSeries/?page=2
 
