@@ -8,3 +8,30 @@ Two kinds of tickets are used in the Kerberos protocol: ticket-granting tickets 
 
 http://www.ibmsystemsmag.com/ibmi/administrator/security/Kerberos-Authentication-on-the-iSeries/?page=2
 
+uses symmetric-key cryptography ⁠[1] to authenticate users to network services, which means passwords are never actually sent over the network.
+
+
+Rather than authenticating each user to each network service separately as with simple password authentication, Kerberos uses symmetric encryption and a trusted third party (a key distribution center or KDC) to authenticate users to a suite of network services. The computers managed by that KDC and any secondary KDCs constitute a realm.
+https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Smart_Cards/Using_Kerberos.html
+
+IMP
+--------------------
+each user is identified to the KDC with a unique identity, called a principal. When a user on a Kerberos-aware network logs into his workstation, his principal is sent to the KDC as part of a request for a ticket-getting ticket (or TGT) from the authentication server. This request can be sent by the login program so that it is transparent to the user or can be sent manually by a user through the kinit program after the user logs in.
+The KDC then checks for the principal in its database. If the principal is found, the KDC creates a TGT, encrypts it using the user's key, and sends the TGT to that user.
+⁠
+The login or kinit program on the client then decrypts the TGT using the user's key, which it computes from the user's password. The user's key is used only on the client machine and is not transmitted over the network. 
+
+The user's key is used only on the client machine and is not transmitted over the network. The ticket (or credentials) sent by the KDC are stored in a local file, the credentials cache, which can be checked by Kerberos-aware services.
+After authentication, servers can check an unencrypted list of recognized principals and their keys rather than checking kinit; this is kept in a keytab.
+
+Whenever the user needs access to a network service, the client software uses the TGT to request a new ticket for that specific service from the ticket-granting server (TGS). The service ticket is then used to authenticate the user to that service transparently.
+
+ By convention, all realm names are uppercase and all DNS hostnames and domain names are lowercase
+
+
+
+
+
+
+
+
