@@ -1,6 +1,7 @@
 http://www.thegeekstuff.com/2014/05/install-kerberos-server/
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Smart_Cards/installing-kerberos.html
 https://gist.github.com/ashrithr/4767927948eca70845db
+http://web.theurbanpenguin.com/configuring-a-centos-7-kerberos-kdc/
 
 
 Instead of authenticating each user to each network service, Kerberos uses symmetric encryption and a trusted third party (a KDC), to authenticate users to a suite of network services.
@@ -65,7 +66,8 @@ Extract the krb5.keytab for the client from the KDC master server
 # kadmin.local -q "ktadd -k /etc/krb5.keytab host/elserver3.example.com"
 
 
-RED HAT DOCUMENTATION
+https://gist.github.com/ashrithr/4767927948eca70845db
+ DOCUMENTATION
 
 kerberos-master.vivekyadavs.me - 192.168.1.51
 kerberos-client.vivekyadavs.me - 192.168.1.52
@@ -74,11 +76,35 @@ REALM - MASTER.VIVEKYADAVS.ME
 
 Install on kerberos-master.vivekyadavs.me
 
-# yum install krb5-server krb5-libs krb5-auth-dialog
+# yum -y install krb5-server krb5-libs
 
 install on kerberos-client.vivekyadavs.me
 
-# yum install krb5-workstation krb5-libs krb5-auth-dialog
+# yum -y install krb5-workstation krb5-libs 
+
+on kerberos-master.vivekyadavs.me
+
+edit /etc/krb5.conf
+
+Adjust /var/kerberos/krb5kdc/kdc.conf on the KDC:
+
+Adjust /var/kerberos/krb5kdc/kadm5.acl on KDC:
+
+Creating KDC database to hold our sensitive Kerberos data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
