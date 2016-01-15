@@ -1,1 +1,46 @@
+Instead of authenticating each user to each network service, Kerberos uses symmetric encryption and a trusted third party (a KDC), to authenticate users to a suite of network services.
+
+kerberos-master.vivekyadavs.me - 192.168.1.51
+kerberos-client.vivekyadavs.me - 192.168.1.52
+
+Install the krb5-libs, krb5-server, and krb5-workstation packages on the dedicated machine which runs the KDC. This machine needs to be very secure — if possible, it should not run any services other than the KDC.
+
+on MASTER
+
+# yum update && yum install krb5-server krb5-workstation pam_krb5
+
+on CLIENT
+
+# yum update && yum install krb5-workstation pam_krb5
+
+
+Once it is installed, edit the configuration files (/etc/krb5.conf and /var/kerberos/krb5kdc/kadm5.acl) and replace all instances of example.com (lowercase and uppercase) with mydomain.com as follows.
+
+# systemctl start krb5kdc kadmin nfs-secure   
+# systemctl enable krb5kdc kadmin nfs-secure       
+
+Now create the Kerberos database
+# kdb5_util create -s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
