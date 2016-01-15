@@ -1,26 +1,121 @@
+http://www.thegeekstuff.com/2014/05/install-kerberos-server/
+https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Smart_Cards/installing-kerberos.html
+https://gist.github.com/ashrithr/4767927948eca70845db
+
+
 Instead of authenticating each user to each network service, Kerberos uses symmetric encryption and a trusted third party (a KDC), to authenticate users to a suite of network services.
 
 kerberos-master.vivekyadavs.me - 192.168.1.51
 kerberos-client.vivekyadavs.me - 192.168.1.52
+DOMAIN  - kerberos-master.vivekyadavs.me
+REALM - MASTER.VIVEKYADAVS.ME
+
 
 Install the krb5-libs, krb5-server, and krb5-workstation packages on the dedicated machine which runs the KDC. This machine needs to be very secure — if possible, it should not run any services other than the KDC.
 
 on MASTER
-
-# yum update && yum install krb5-server krb5-workstation pam_krb5
-
-on CLIENT
-
-# yum update && yum install krb5-workstation pam_krb5
-
+-------------------
+# yum update && yum install krb5-server krb5-workstation pam_krb5 krb5-auth-dialog
 
 Once it is installed, edit the configuration files (/etc/krb5.conf and /var/kerberos/krb5kdc/kadm5.acl) and replace all instances of example.com (lowercase and uppercase) with mydomain.com as follows.
 
-# systemctl start krb5kdc kadmin nfs-secure   
-# systemctl enable krb5kdc kadmin nfs-secure       
+Modify /etc/krb5.conf File
+Change /etc/krb5.conf to reflect like the below with the appropriate REALM and DOMAIN_REALM mappings.
 
-Now create the Kerberos database
-# kdb5_util create -s
+Modify kdc.conf File
+
+Create KDC database
+
+Next, create the KDC database using the kdb5_util command as shown below. As this stage, enter the appropriate pasword for the KDC database master key.
+
+# /usr/sbin/kdb5_util create -s
+
+Assign Administrator Privilege
+
+# cat /var/kerberos/krb5kdc/kadm5.acl
+*/admin@MYREALM.COM     *
+
+any principal in the MYREALM with an admin instance has all administrator privileges.
+
+Create a Principal
+
+I created the principal with the user name “eluser”.
+kadmin.local -q "addprinc eluser/admin"
+
+Start the Kerberos Service
+
+# service krb5kdc start
+Starting Kerberos 5 KDC:               [  OK  ]
+
+# service kadmin start
+Starting Kerberos 5 Admin Server:      [  OK  ]
+
+
+Configure Kerberos Client
+
+	Install the krb5-libs and krb5-workstation krb5-auth-dialog
+	
+	Copy the /etc/krb5.conf from the KDC server to the client machine.
+	
+	create the principal for the client in the KDC/Kerberos database.
+	# kadmin.local -q "addprinc host/elserver3.example.com"
+	
+Extract the krb5.keytab for the client from the KDC master server 
+
+# kadmin.local -q "ktadd -k /etc/krb5.keytab host/elserver3.example.com"
+
+
+RED HAT DOCUMENTATION
+
+kerberos-master.vivekyadavs.me - 192.168.1.51
+kerberos-client.vivekyadavs.me - 192.168.1.52
+DOMAIN  - kerberos-master.vivekyadavs.me
+REALM - MASTER.VIVEKYADAVS.ME
+
+Install on kerberos-master.vivekyadavs.me
+
+# yum install krb5-server krb5-libs krb5-auth-dialog
+
+install on kerberos-client.vivekyadavs.me
+
+# yum install krb5-workstation krb5-libs krb5-auth-dialog
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
