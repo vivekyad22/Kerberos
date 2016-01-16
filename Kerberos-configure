@@ -3,7 +3,8 @@ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Ma
 https://gist.github.com/ashrithr/4767927948eca70845db
 http://web.theurbanpenguin.com/configuring-a-centos-7-kerberos-kdc/
 http://www.microhowto.info/howto/add_a_host_or_service_principal_to_a_keytab_using_mit_kerberos.html
-
+https://uit.stanford.edu/service/kerberos/keytabs
+https://www.centos.org/docs/5/html/Deployment_Guide-en-US/ch-kerberos.html
 
 Instead of authenticating each user to each network service, Kerberos uses symmetric encryption and a trusted third party (a KDC), to authenticate users to a suite of network services.
 
