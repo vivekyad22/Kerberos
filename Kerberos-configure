@@ -13,66 +13,11 @@ DOMAIN  - kerberos-master.vivekyadavs.me
 REALM - MASTER.VIVEKYADAVS.ME
 
 
-Install the krb5-libs, krb5-server, and krb5-workstation packages on the dedicated machine which runs the KDC. This machine needs to be very secure — if possible, it should not run any services other than the KDC.
-
-on MASTER
--------------------
-# yum update && yum install krb5-server krb5-workstation pam_krb5 krb5-auth-dialog
-
-Once it is installed, edit the configuration files (/etc/krb5.conf and /var/kerberos/krb5kdc/kadm5.acl) and replace all instances of example.com (lowercase and uppercase) with mydomain.com as follows.
-
-Modify /etc/krb5.conf File
-Change /etc/krb5.conf to reflect like the below with the appropriate REALM and DOMAIN_REALM mappings.
-
-Modify kdc.conf File
-
-Create KDC database
-
-Next, create the KDC database using the kdb5_util command as shown below. As this stage, enter the appropriate pasword for the KDC database master key.
-
-# /usr/sbin/kdb5_util create -s
-
-Assign Administrator Privilege
-
-# cat /var/kerberos/krb5kdc/kadm5.acl
-*/admin@MYREALM.COM     *
-
-any principal in the MYREALM with an admin instance has all administrator privileges.
-
-Create a Principal
-
-I created the principal with the user name “eluser”.
-kadmin.local -q "addprinc eluser/admin"
-
-Start the Kerberos Service
-
-# service krb5kdc start
-Starting Kerberos 5 KDC:               [  OK  ]
-
-# service kadmin start
-Starting Kerberos 5 Admin Server:      [  OK  ]
-
-
-Configure Kerberos Client
-
-	Install the krb5-libs and krb5-workstation krb5-auth-dialog
-	
-	Copy the /etc/krb5.conf from the KDC server to the client machine.
-	
-	create the principal for the client in the KDC/Kerberos database.
-	# kadmin.local -q "addprinc host/elserver3.example.com"
-	
-Extract the krb5.keytab for the client from the KDC master server 
-
-# kadmin.local -q "ktadd -k /etc/krb5.keytab host/elserver3.example.com"
-
-
-
-
-
 https://gist.github.com/ashrithr/4767927948eca70845db
  DOCUMENTATION
 ----------------------------------------------------------------------------------------------------------------------------
+ENABLE/INSTALL KERBEROS SERVER ON  MASTER
+---------------------------------------------------------
 
 kerberos-master.vivekyadavs.me - 192.168.1.51
 kerberos-client.vivekyadavs.me - 192.168.1.52
@@ -81,9 +26,6 @@ REALM - MASTER.VIVEKYADAVS.ME
 
 Install on kerberos-master.vivekyadavs.me
 # yum -y install krb5-server krb5-libs
-
-install on kerberos-client.vivekyadavs.me
-# yum -y install krb5-workstation krb5-libs 
 
 on kerberos-master.vivekyadavs.me
 edit /etc/krb5.conf
@@ -96,6 +38,16 @@ kdb5_util create -r MASTER.VIVEKYADAVS.ME -s
 
 A keytab is a file used to store the encryption keys for one or more Kerberos principals (usually host and/or service principals). Given one of these keys it is possible to obtain a ticket-granting ticket, so having an encryption key can be equated to having a password. Whenever a host or service principal is created it is normal practice to add it to a keytab.
 Kerberos hosts usually have a default keytab with the pathname /etc/krb5.keytab. The host principal should be added to this keytab, but it is not necessarily suitable for use with service principals. The reason is that /etc/krb5.keytab should be readable only by root, whereas on modern systems it is common for network services to execute as a non-root user. The only secure solution to this issue is to have multiple keytabs, each owned by the user that needs access to it.
+
+
+ENABLE KERBEROS ON CLIENT SIDE
+---------------------------------------------------------------------
+install on kerberos-client.vivekyadavs.me
+# yum -y install krb5-workstation krb5-libs 
+
+Transfer your /etc/krb5.conf (which got created from above command) from the KDC server to the client. Hop onto the client server, install the Kerberos client package and add some host principals:
+
+
 
 Principal FOR Hosts
 -----------------------------------------------------------------------------
@@ -160,7 +112,6 @@ systemctl start krb5kdc.service
 systemctl start kadmin.service
 systemctl enable krb5kdc.service
 systemctl enable kadmin.service
-
 
 
 
