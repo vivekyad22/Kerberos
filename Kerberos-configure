@@ -2,6 +2,7 @@ http://www.thegeekstuff.com/2014/05/install-kerberos-server/
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Smart_Cards/installing-kerberos.html
 https://gist.github.com/ashrithr/4767927948eca70845db
 http://web.theurbanpenguin.com/configuring-a-centos-7-kerberos-kdc/
+http://www.microhowto.info/howto/add_a_host_or_service_principal_to_a_keytab_using_mit_kerberos.html
 
 
 Instead of authenticating each user to each network service, Kerberos uses symmetric encryption and a trusted third party (a KDC), to authenticate users to a suite of network services.
@@ -66,8 +67,12 @@ Extract the krb5.keytab for the client from the KDC master server
 # kadmin.local -q "ktadd -k /etc/krb5.keytab host/elserver3.example.com"
 
 
+
+
+
 https://gist.github.com/ashrithr/4767927948eca70845db
  DOCUMENTATION
+----------------------------------------------------------------------------------------------------------------------------
 
 kerberos-master.vivekyadavs.me - 192.168.1.51
 kerberos-client.vivekyadavs.me - 192.168.1.52
@@ -75,22 +80,130 @@ DOMAIN  - kerberos-master.vivekyadavs.me
 REALM - MASTER.VIVEKYADAVS.ME
 
 Install on kerberos-master.vivekyadavs.me
-
 # yum -y install krb5-server krb5-libs
 
 install on kerberos-client.vivekyadavs.me
-
 # yum -y install krb5-workstation krb5-libs 
 
 on kerberos-master.vivekyadavs.me
-
 edit /etc/krb5.conf
 
 Adjust /var/kerberos/krb5kdc/kdc.conf on the KDC:
-
 Adjust /var/kerberos/krb5kdc/kadm5.acl on KDC:
 
 Creating KDC database to hold our sensitive Kerberos data
+kdb5_util create -r MASTER.VIVEKYADAVS.ME -s
+
+A keytab is a file used to store the encryption keys for one or more Kerberos principals (usually host and/or service principals). Given one of these keys it is possible to obtain a ticket-granting ticket, so having an encryption key can be equated to having a password. Whenever a host or service principal is created it is normal practice to add it to a keytab.
+Kerberos hosts usually have a default keytab with the pathname /etc/krb5.keytab. The host principal should be added to this keytab, but it is not necessarily suitable for use with service principals. The reason is that /etc/krb5.keytab should be readable only by root, whereas on modern systems it is common for network services to execute as a non-root user. The only secure solution to this issue is to have multiple keytabs, each owned by the user that needs access to it.
+
+Principal FOR Hosts
+-----------------------------------------------------------------------------
+
+Add HOST key for client-kerberos.vivekyadavs.me
+kadmin -q "addprinc -randkey host/client-kerberos.vivekyadavs.me"
+
+
+Principal FOR USERS
+-----------------------------------------------------------------------------
+kadmin:  addprinc username@MASTER.VIVEKYADAVS.ME 
+
+Now on the KDC create a admin principal and also a test user (kerbuser):
+
+kadmin.local:  addprinc root/admin
+kadmin.local:  addprinc admin/admin
+kadmin.local:  addprinc kerbuser
+
+The meaning of those acl contents are that any account which ends with a /admin in the GNUD.IE realm is granted full access privileges.
+
+Now that we've set up access for our administrative user, we need to create that administrative user.
+The standard is to name the administrative account admin or root, i ll give as admin
+
+test - 
+$ kinit -p kerbuser@MASTER.VIVEKYADAVS.ME
+
+
+Enable SSH
+Step1: Configuring SSH Server
+
+Configure /etc/ssh/sshd_config file to include the following lines:
+
+KerberosAuthentication yes
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials yes
+UsePAM no
+Now, restart the ssh daemon.
+
+Step2: Configure the SSH Client
+
+Configure /etc/ssh_config to include following lines:
+
+Host *.vivekyadavs.me
+  GSSAPIAuthentication yes
+  GSSAPIDelegateCredentials yes
+
+TEST SSH , then Add service
+
+Add service
+
+kadmin -q "addprinc -randkey HTTP/www.example.com"
+kadmin -q "getprinc HTTP/www.example.com"
+
+
+Now TEST using SSH After kerberos restart
+
+The daemons that must run on the server are krb5kdc and kadmin.
+
+{Kerberos1}bash# /sbin/chkconfig krb5kdc on
+{Kerberos1}bash# /sbin/chkconfig kadmin on
+systemctl start krb5kdc.service
+systemctl start kadmin.service
+systemctl enable krb5kdc.service
+systemctl enable kadmin.service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
