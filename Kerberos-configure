@@ -114,6 +114,7 @@ systemctl start kadmin.service
 systemctl enable krb5kdc.service
 systemctl enable kadmin.service
 
+Add policies for different services and hosts
 
 
 
