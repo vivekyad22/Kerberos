@@ -53,8 +53,8 @@ Transfer your /etc/krb5.conf (which got created from above command) from the KDC
 Principal FOR Hosts
 -----------------------------------------------------------------------------
 
-Add HOST key for client-kerberos.vivekyadavs.me
-kadmin -q "addprinc -randkey host/client-kerberos.vivekyadavs.me"
+Add HOST key for kerberos-client.vivekyadavs.me
+kadmin -q "addprinc -randkey host/kerberos-client.vivekyadavs.me"
 
 
 Principal FOR USERS
@@ -99,7 +99,7 @@ TEST SSH , then Add service
 
 Add service
 
-kadmin -q "addprinc -randkey HTTP/www.example.com"
+kadmin -q "addprinc -randkey ssh/kerberos-client.vivekyadavs.me"
 kadmin -q "getprinc HTTP/www.example.com"
 
 
@@ -120,6 +120,50 @@ Add policies for different services and hosts
 
 
 
+KRB.CONF
+
+[logging]
+ default = FILE:/var/log/krb5libs.log
+ kdc = FILE:/var/log/krb5kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+ dns_lookup_realm = false
+ ticket_lifetime = 24h
+ renew_lifetime = 7d
+ forwardable = true
+ rdns = false
+ default_realm = MASTER.VIVEKYADAVS.ME
+ default_ccache_name = KEYRING:persistent:%{uid}
+
+[realms]
+ MASTER.VIVEKYADAVS.ME = {
+  kdc = kerberos-master.vivekyadavs.me
+  admin_server = kerberos-master.vivekyadavs.me
+ }
+
+[domain_realm]
+ .vivekyadavs.me = MASTER.VIVEKYADAVS.ME
+ kerberos-master.vivekyadavs.me = MASTER.VIVEKYADAVS.ME
+
+
+
+
+[root@CentOS-Minimal krb5kdc]# cat /var/kerberos/krb5kdc/kdc.conf
+default_realm = MASTER.VIVEKYADAVS.ME
+
+[kdcdefaults]
+ kdc_ports = 88
+ kdc_tcp_ports = 88
+
+[realms]
+  MASTER.VIVEKYADAVS.ME = {
+  master_key_type = aes256-cts
+  acl_file = /var/kerberos/krb5kdc/kadm5.acl
+  dict_file = /usr/share/dict/words
+  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+ }
 
 
 
