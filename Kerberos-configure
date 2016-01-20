@@ -78,7 +78,12 @@ Principal FOR Hosts
 -----------------------------------------------------------------------------
 
 Add HOST key for kerberos-client.vivekyadavs.me
-kadmin -q "addprinc -randkey host/kerberos-client.vivekyadavs.me"
+kadmin  "addprinc -randkey host/kerberos-client.vivekyadavs.me"
+kadmin  "ktadd host/kerberos-client.vivekyadavs.me"
+
+Add HOST key for kerberos-master.vivekyadavs.me
+kadmin  "addprinc -randkey host/kerberos-master.vivekyadavs.me"
+kadmin  "ktadd host/kerberos-master.vivekyadavs.me"
 
 
 Enable SSH
