@@ -6,6 +6,11 @@ authentication to network services over untrusted networks.
 (MIT) developed Kerberos
 AES 256 bit encryption , More secure and Fast
 
+Kerberos only handles authentication, of machines or of users. When a user logs in to their machine, they request a Ticket-Granting Ticket (TGT) from the Key Distribution Center (your main Kerberos server, or a slave server). The KDC finds the user in its database, then sends back a TGT encrypted using their key. That TGT is decrypted at the other end with the user’s password. Therefore the password isn’t sent over the network, increasing security.
+
+After that, any kerberized service uses this TGT to ask for a service-specific ticket: the user doesn’t need to enter their password again until the TGT expires (usually 10 hours), or is deleted. So, for example, if your entire system is Kerberos authenticated, you can log on once and then ssh to any system without having to re-authenticate.
+
+
 
 Limitations -
 ---------------
