@@ -1,3 +1,6 @@
+Configuration & management of network authentication protocol 'kerberos' for excess security & providing single sign on by integrating GSSAPI with services like SSH etc .  
+
+
 Kerberos is a shared secret protocol, which means that tickets encrypted by the KDC can be decrypted only by clients or servers that have the shared secret.
 To understand the Kerberos protocol, start with the concept of a Kerberos realm, which is a set of users and servers for which a given KDC is the authenticating authority.
 A Kerberos principal is a workstation user ID and its associated password or a server ID and its associated password. 
